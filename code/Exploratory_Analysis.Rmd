@@ -1,0 +1,26 @@
+---
+title: "DA 401"
+author: "Zoe Pratt"
+date: "3/1/2022"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+game_data = read.csv('/Users/zoepratt/Documents/GitHub/Top-Chess-Players/data/player_piece_sac_data.csv')
+```
+
+```{r}
+ggplot(game_data, aes(x = player, y = moves))+
+  geom_boxplot()
+```
+
+```{r}
+ggplot(game_data, aes(x = player, y = total_sac))+
+  geom_boxplot()
+```
+

@@ -1,0 +1,16 @@
+---
+title: "DA 401"
+author: "Zoe Pratt"
+date: "3/1/2022"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+data = read.csv()
+```
+
