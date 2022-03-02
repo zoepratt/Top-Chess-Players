@@ -12,6 +12,8 @@ library(dplyr)
 
 ```{r}
 game_data = read.csv('/Users/zoepratt/Documents/GitHub/Top-Chess-Players/data/player_piece_sac_data.csv')
+
+game_data %>% count(player)
 ```
 
 ```{r}
