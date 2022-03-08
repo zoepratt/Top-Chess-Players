@@ -26,3 +26,7 @@ ggplot(game_data, aes(x = player, y = total_sac))+
   geom_boxplot()
 ```
 
+```{r}
+cor(game_data$total_sac, game_data$moves)
+```
+
