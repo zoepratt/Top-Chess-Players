@@ -10,6 +10,7 @@ library(ggplot2)
 library(dplyr)
 library(ggthemes)
 library(car)
+library(rstatix)
 ```
 
 
@@ -21,16 +22,61 @@ raw = read.csv('/Users/zoepratt/Documents/GitHub/Top-Chess-Players/data/player_p
 game_data <- raw %>%
   filter(player != 'Botvinnik' & player != 'Capablanca' & player != 'Fischer' & player != 'Morphy')
 
+game_data <- game_data %>%
+  select(-file_name)
+
 game_data %>% count(player)
+```
+
+```{r}
+alekhine <- game_data%>%
+  filter(player == 'Alekhine')
+
+anand <- game_data %>%
+  filter(player == 'Anand')
+
+carlsen <- game_data %>%
+  filter(player == 'Carlsen')
+
+caruana <- game_data %>%
+  filter(player == 'Caruana')
+
+kasparov <- game_data %>%
+  filter(player == 'Kasparov')
+
+nakamura <- game_data %>%
+  filter(player == 'Nakamura')
+
+polgar <- game_data %>%
+  filter(player == 'Polgar')
+
+tal <- game_data %>%
+  filter(player == 'Tal')
+```
+
+```{r}
+game_data %>%
+  group_by(player) %>%
+  identify_outliers(moves)
+```
+
+```{r}
+t.test(nakamura$moves, tal$moves)
 ```
 
 ```{r}
 ggplot(game_data, aes(x = player, y = moves))+
   geom_boxplot() +
   labs(x = 'Player', y='Number of Moves in Chess Match', title = 'Number of Moves in a Match by Player') +
-  theme(plot.background = element_rect(fill = "slategray2"), panel.background = element_rect(fill = "slategray2")) +
+  theme_bw() +
   theme(plot.title = element_text(hjust = 0.5))
 
+```
+```{r}
+ggplot(game_data, aes(x = player, y = total_sac))+
+  geom_boxplot() + 
+  labs(x = 'Player', y='Number of Pieces Sacrificed in Chess Match', title = 'Number of Pieces Sacrificed in a Match by Player') + theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ```{r}
