@@ -5,17 +5,21 @@ date: "3/1/2022"
 output: html_document
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(ggplot2)
 library(dplyr)
 library(ggthemes)
 library(car)
 library(rstatix)
+library(equivalence)
+library(knitr)
 ```
 
 
 ```{r}
 raw = read.csv('/Users/zoepratt/Documents/GitHub/Top-Chess-Players/data/player_piece_sac_data.csv')
+
+raw %>% count(player)
 ```
 
 ```{r}
@@ -23,9 +27,20 @@ game_data <- raw %>%
   filter(player != 'Botvinnik' & player != 'Capablanca' & player != 'Fischer' & player != 'Morphy')
 
 game_data <- game_data %>%
-  select(-file_name)
+  filter(moves != 0)
+
+game_data <- game_data %>%
+  dplyr::select(-file_name)
+
+game_data$moves_log = log(game_data$moves)
 
 game_data %>% count(player)
+```
+
+```{r}
+agg_def <- game_data %>%
+  group_by(player) %>%
+  summarise(criteria = mean(total_sac/moves)) 
 ```
 
 ```{r}
@@ -59,9 +74,58 @@ game_data %>%
   group_by(player) %>%
   identify_outliers(moves)
 ```
+```{r}
+game_data %>%
+  group_by(player) %>%
+  shapiro_test(moves_log)
+```
 
 ```{r}
-t.test(nakamura$moves, tal$moves)
+game_data %>% levene_test(moves_log ~ player)
+
+```
+```{r}
+kruskal.test(moves ~ player, data = game_data)
+```
+
+```{r}
+test <- pairwise.wilcox.test(game_data$moves, game_data$player,
+                 p.adjust.method = "BH")
+
+pairwise.table(test)
+```
+
+```{r}
+kruskal.test(moves ~ player, data = game_data)
+```
+
+```{r}
+pairwise.wilcox.test(game_data$moves, game_data$player,
+                 p.adjust.method = "BH")
+```
+
+```{r message=FALSE}
+ggplot(game_data, aes(x = moves))+
+  geom_histogram(fill = 'lightgreen', color = 'darkgreen') +
+  labs(x = 'Number of Moves in Chess Match', y = 'Count', title = 'Distribution of Number of Moves in a Chess Match') +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+```{r}
+mean(game_data$moves)
+median(game_data$moves)
+max(game_data$moves)
+mean(game_data$total_sac)
+median(game_data$total_sac)
+max(game_data$total_sac)
+```
+
+```{r message=FALSE}
+ggplot(game_data, aes(x = total_sac))+
+  geom_histogram(fill = 'lightblue', color = 'darkblue') +
+  labs(x = 'Number of Pieces Sacrificed in Chess Match', y = 'Count', title = 'Distribution of Number of Pieces Sacrificed in a Chess Match') +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) 
 ```
 
 ```{r}
